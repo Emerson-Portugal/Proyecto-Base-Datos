@@ -21,7 +21,7 @@ def mostrar_usuario():
     finally:
         conn.close()
 
-## Crear Usuarios
+
 def crear_usuario():
     try:
         # Obtener el objeto de conexión a la base de datos
@@ -29,17 +29,66 @@ def crear_usuario():
 
         with conn.cursor() as cursor:
             # Ejecutar la función crear_usuario
-            id_usuario = input("ID Cliente: ")
-            nombre_usuario = input("Nombre: ")
-            direccion_usuario = input("Dirección: ")
-            pais_usuario = input("ID País: ")
-            telefono_usuario = input("Teléfono: ")
+            id_usuario = input('Id del Usuario: ')
+            nombre_usuario = input('Nombre Uuario: ')
+            direccion_usuario = input('Direccion Usuario: ')
+            pais_usuario = input('Id del Pais: ')
+            telefono_usuario = input('Telefono: ')
 
-            cursor.execute(f"SELECT crear_usuario_f2('{id_usuario}', '{nombre_usuario}', '{direccion_usuario}', '{pais_usuario}', '{telefono_usuario}')")
+            cursor.callproc('crear_usuario_f2', [id_usuario, nombre_usuario, direccion_usuario, pais_usuario, telefono_usuario])
 
-            print("Función crear_usuario ejecutada correctamente")
+            # Confirmar los cambios en la base de datos
+            conn.commit()
+
+            print("Usuario creado correctamente")
     except psycopg2.Error as e:
-        print("Ocurrió un error al consultar: ", e)
+        print("Ocurrió un error al crear el usuario: ", e)
+    finally:
+        conn.close()
+
+
+def actualizar_usuario():
+    try:
+        # Obtener el objeto de conexión a la base de datos
+        conn = conexion()
+
+        with conn.cursor() as cursor:
+            # Ejecutar la función crear_usuario
+            id_usuario = input('Nuevo ID: ')
+            nombre_usuario = input('Nuevo Nombre: ')
+            direccion_usuario = input('Nueva Direcion: ')
+            pais_usuario = input('Nuevo ID Pais: ')
+            telefono_usuario = input('Nuevo Telefono: ')
+
+            cursor.callproc('actualizar_usuario', [id_usuario, nombre_usuario, direccion_usuario, pais_usuario, telefono_usuario])
+
+            # Confirmar los cambios en la base de datos
+            conn.commit()
+
+            print("Usuario actualizado correctamente")
+    except psycopg2.Error as e:
+        print("Ocurrió un error al crear el usuario: ", e)
+    finally:
+        conn.close()
+
+
+def eliminar_usuario():
+    try:
+        # Obtener el objeto de conexión a la base de datos
+        conn = conexion()
+
+        with conn.cursor() as cursor:
+            # Ejecutar el procedimiento almacenado para eliminar el usuario
+            id_usuario = input('ID del Usuario a eliminar: ')
+            cursor.execute("CALL eliminar_usuario(%s)", [id_usuario])
+
+
+            # Confirmar los cambios en la base de datos
+            conn.commit()
+
+            print("Usuario eliminado correctamente")
+    except psycopg2.Error as e:
+        print("Ocurrió un error al eliminar el usuario: ", e)
     finally:
         conn.close()
 
@@ -53,11 +102,9 @@ def main():
         elif operacion == "2":
             mostrar_usuario()
         elif operacion == "3":
-            # Agrega aquí la lógica para la operación de actualización
-            pass
+            actualizar_usuario()
         elif operacion == "4":
-            # Agrega aquí la lógica para la operación de eliminación
-            pass
+            eliminar_usuario ()
         elif operacion == "0":
             break
         else:

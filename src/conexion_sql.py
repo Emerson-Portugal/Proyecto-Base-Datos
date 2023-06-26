@@ -15,3 +15,8 @@ def conexion():
     except psycopg2.Error as e:
         print("Ocurrió un error al conectar a PostgreSQL: ", e)
 
+def main():
+    conexion()
+
+if __name__ == "__main__":
+    main()
